@@ -85,7 +85,6 @@
                                     ? $tracking_data['shipment_track'][0]['current_status']
                                     : false;
                             $has_delivered = $current_status == 'Delivered';
-                            $has_delivered = false;
                             $etd =
                                 isset($tracking_data['etd']) && !empty($tracking_data['etd'])
                                     ? $tracking_data['etd']
@@ -141,24 +140,24 @@
                             @endif
                         </div>
                     @endif
-                    @if (isset($tracking_data) && !empty($tracking_data))
-                        @if ($tracking_data['track_status'] == 0 && isset($tracking_data['error']) && !empty($tracking_data['error']))
-                            <div class="error">
-                                {{ $tracking_data['error'] }}
-                            </div>
-                        @endif
-                    @endif
                 </div>
             </div>
             <div>
 
                 @if (isset($tracking_data) && !empty($tracking_data))
+                    @if ($tracking_data['track_status'] == 0 && isset($tracking_data['error']) && !empty($tracking_data['error']))
+                        <div class="expected-delivery mt-4">
+                            <div class="error">
+                                {{ $tracking_data['error'] }}
+                            </div>
+                        </div>
+                    @endif
                     @if ($tracking_data['track_status'] == 1)
                         {{-- @if (isset($tracking_data['shipment_track']) && isset($tracking_data['shipment_track'][0]) && $tracking_data['shipment_track'][0]['current_status'])
-                            <div>
-                                Current Status - {{ $tracking_data['shipment_track'][0]['current_status'] }}
-                            </div>
-                        @endif --}}
+                        <div>
+                            Current Status - {{ $tracking_data['shipment_track'][0]['current_status'] }}
+                        </div>
+                    @endif --}}
                         <br />
                         <hr>
                         <br />
@@ -185,7 +184,6 @@
                             @endforeach
                         </ol>
                     @endif
-                    @dump($tracking_data)
                 @endif
             </div>
         </div>
