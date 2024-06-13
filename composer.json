@@ -1,0 +1,33 @@
+{
+    "name": "coderomeos/bagisto-shiprocket",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Abid Raza",
+            "email": "ari.abid@gmail.com"
+        },
+        {
+            "name": "Shubham Surya",
+            "email": "shubhamsurya95@gmail.com"
+        },
+        {
+            "name": "Gautam Kumar",
+            "email": "guruonly007@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "CodeRomeos\\BagistoShiprocket\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "CodeRomeos\\BagistoShiprocket\\Providers\\BagistoShiprocketServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "minimum-stability": "dev"
+}
