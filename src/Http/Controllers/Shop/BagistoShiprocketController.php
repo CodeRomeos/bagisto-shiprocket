@@ -18,7 +18,7 @@ class BagistoShiprocketController extends Controller
             'tracking_data' => null
         ];
 
-        if($request->has('awbCode')) {
+        if($request->filled('awbCode')) {
             $shiprocketApi = new Shiprocket;
             $data = $shiprocketApi->trackAWB(56789009876);
             // $data = [
