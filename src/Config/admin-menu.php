@@ -1,11 +1,11 @@
 <?php
 
 return [
-    [
-        'key'   => 'bagistoshiprocket',
-        'name'  => 'BagistoShiprocket',
-        'route' => 'admin.bagistoshiprocket.index',
-        'sort'  => 2,
-        'icon'  => 'temp-icon',
-    ]
+    // [
+    //     'key'   => 'bagistoshiprocket',
+    //     'name'  => 'BagistoShiprocket',
+    //     'route' => 'admin.bagistoshiprocket.index',
+    //     'sort'  => 2,
+    //     'icon'  => 'temp-icon',
+    // ]
 ];

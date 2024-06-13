@@ -53,5 +53,10 @@ class BagistoShiprocketServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(
             dirname(__DIR__) . '/Config/acl.php', 'acl'
         );
+
+        $this->mergeConfigFrom(
+            dirname(__DIR__) . '/Config/shiprocket.php',
+            'shiprocket'
+        );
     }
 }
