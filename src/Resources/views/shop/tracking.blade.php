@@ -59,7 +59,7 @@
         Shiprocket Tracking | {{ config('app.name') }}
     </x-slot>
 
-    <div class="main">
+    <div class="main" style="padding-bottom: 300px">
         <div class="container mt-[30px] px-[60px] max-lg:px-[30px]">
             <div class="two-col">
                 <div>
