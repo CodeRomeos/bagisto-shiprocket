@@ -2,10 +2,12 @@
 
 namespace CodeRomeos\BagistoShiprocket\Services;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
-class Shiprocket {
+class Shiprocket
+{
 
     protected $baseUrl;
 
@@ -35,21 +37,22 @@ class Shiprocket {
             'password' => $this->userPassword,
         ]);
 
-        if($response->failed()) {
+        if ($response->failed()) {
             return false;
         }
-        
+
         $json = $response->json();
 
         return isset($json['token']) ? $json['token'] : false;
     }
 
-    function cacheToken() {
+    function cacheToken()
+    {
         $token = Cache::get('bagistoshiprocket_token');
 
-        if($token) return $token;
+        if ($token) return $token;
 
-        if($token = $this->generateToken()) {
+        if ($token = $this->generateToken()) {
             Cache::put('bagistoshiprocket_token', $token, 60 * 24 * 8);
             return $token;
         }
@@ -57,15 +60,37 @@ class Shiprocket {
         return false;
     }
 
-    public function trackAWB($awb) {
+    public function trackAWB($awb)
+    {
         $token = Cache::get('bagistoshiprocket_token');
 
-        if(!$token) {return false;}
+        if (!$token) {
+            return false;
+        }
 
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $token
         ])->get($this->baseUrl . '/courier/track/awb/' . $awb);
-        if($response->failed()) {
+        if ($response->failed()) {
+            return false;
+        }
+
+        $json = $response->json();
+        return $json;
+    }
+
+    public function getEstimatedDelivery(Request $request)
+    {
+        $token = Cache::get('bagistoshiprocket_token');
+
+        if (!$token) {
+            return false;
+        }
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $token
+        ])->get($this->baseUrl . '/courier/serviceability', $request->all());
+        if ($response->failed()) {
             return false;
         }
 

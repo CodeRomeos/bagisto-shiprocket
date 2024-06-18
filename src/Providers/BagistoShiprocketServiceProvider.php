@@ -2,6 +2,7 @@
 
 namespace CodeRomeos\BagistoShiprocket\Providers;
 
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Event;
 
@@ -24,9 +25,11 @@ class BagistoShiprocketServiceProvider extends ServiceProvider
 
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'bagistoshiprocket');
 
-        Event::listen('bagisto.admin.layout.head', function($viewRenderEventManager) {
+        Event::listen('bagisto.admin.layout.head', function ($viewRenderEventManager) {
             $viewRenderEventManager->addTemplate('bagistoshiprocket::admin.layouts.style');
         });
+
+        $this->registerBladeDirectives();
     }
 
     /**
@@ -47,16 +50,25 @@ class BagistoShiprocketServiceProvider extends ServiceProvider
     protected function registerConfig()
     {
         $this->mergeConfigFrom(
-            dirname(__DIR__) . '/Config/admin-menu.php', 'menu.admin'
+            dirname(__DIR__) . '/Config/admin-menu.php',
+            'menu.admin'
         );
 
         $this->mergeConfigFrom(
-            dirname(__DIR__) . '/Config/acl.php', 'acl'
+            dirname(__DIR__) . '/Config/acl.php',
+            'acl'
         );
 
         $this->mergeConfigFrom(
             dirname(__DIR__) . '/Config/shiprocket.php',
             'shiprocket'
         );
+    }
+
+    protected function registerBladeDirectives()
+    {
+        Blade::directive('shiprocketPincode', function ($pincode) {
+            return "<?php echo 'check'; ?>";
+        });
     }
 }

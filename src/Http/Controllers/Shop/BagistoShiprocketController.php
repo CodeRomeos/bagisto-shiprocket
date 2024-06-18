@@ -12,13 +12,20 @@ class BagistoShiprocketController extends Controller
 {
     use DispatchesJobs, ValidatesRequests;
 
+    protected $shiprocketApi;
+
+    public function __construct()
+    {
+        $shiprocketApi = new Shiprocket;
+    }
+
     public function tracking(Request $request)
     {
         $data = [
             'tracking_data' => null
         ];
 
-        if($request->filled('awbCode')) {
+        if ($request->filled('awbCode')) {
             $shiprocketApi = new Shiprocket;
             $data = $shiprocketApi->trackAWB(56789009876);
             // $data = [
@@ -125,5 +132,25 @@ class BagistoShiprocketController extends Controller
         }
 
         return view('bagistoshiprocket::shop.tracking', ['tracking_data' => $data['tracking_data'], 'awbCode' => $request->awbCode]);
+    }
+
+    public function getEstimatedDelivery(Request $request)
+    {
+        $request->validate([
+            'pickup_postcode' => 'sometimes|required|integer|digits:6',
+            'delivery_postcode' =>  'required|integer|digits:6',
+            'weight' => 'required|numeric',
+            'cod' => 'sometimes|required|boolean'
+        ]);
+
+        $pickUpAddress = app('Webkul\Inventory\Repositories\InventorySourceRepository')->getModel()->latest()->first();
+
+        $request->mergeIfMissing([
+            'pickup_postcode' => config('shiprocket.pickupPostcode') ?? $pickUpAddress->postcode,
+            'cod' => 0
+        ]);
+
+        $data = $this->shiprocketApi->getEstimatedDelivery($request);
+        return response()->json($data);
     }
 }
