@@ -7,6 +7,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
+use Webkul\Checkout\Facades\Cart;
 
 class BagistoShiprocketController extends Controller
 {
@@ -27,7 +28,7 @@ class BagistoShiprocketController extends Controller
 
         if ($request->filled('awbCode')) {
             $shiprocketApi = new Shiprocket;
-            $data = $shiprocketApi->trackAWB(56789009876);
+            $data = $shiprocketApi->trackAWB($request->awbCode);
             // $data = [
             //     "tracking_data" => [
             //         "track_status" => 1,
@@ -147,6 +148,36 @@ class BagistoShiprocketController extends Controller
 
         $request->mergeIfMissing([
             'pickup_postcode' => config('shiprocket.pickupPostcode') ?? $pickUpAddress->postcode,
+            'cod' => 0
+        ]);
+
+        $data = $this->shiprocketApi->getEstimatedDelivery($request);
+        return response()->json($data);
+    }
+
+    public function checkPincodeAvailability(Request $request)
+    {
+        $request->validate([
+            'pickup_postcode' => 'sometimes|required|integer|digits:6',
+            'delivery_postcode' =>  'required|integer|digits:6',
+            'weight' => 'sometimes|required|numeric',
+            'cod' => 'sometimes|required|boolean'
+        ]);
+
+        $cart = Cart::getCart();
+        $pickUpAddress = app('Webkul\Inventory\Repositories\InventorySourceRepository')->getModel()->latest()->first();
+
+        $calculateTotalWeight = 0;
+
+        foreach ($cart->items as $item) {
+            if ($item->getTypeInstance()->isStockable()) {
+                $calculateTotalWeight += $item->total_weight;
+            }
+        }
+
+        $request->mergeIfMissing([
+            'pickup_postcode' => config('shiprocket.pickupPostcode') ?? $pickUpAddress->postcode,
+            'weight' => $request->weight ?? $calculateTotalWeight ?? 0.5,
             'cod' => 0
         ]);
 
