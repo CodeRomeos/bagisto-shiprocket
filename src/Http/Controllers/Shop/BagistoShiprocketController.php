@@ -7,6 +7,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
+use Webkul\Product\Models\Product;
 use Webkul\Checkout\Facades\Cart;
 
 class BagistoShiprocketController extends Controller
@@ -140,18 +141,30 @@ class BagistoShiprocketController extends Controller
         $request->validate([
             'pickup_postcode' => 'sometimes|required|integer|digits:6',
             'delivery_postcode' =>  'required|integer|digits:6',
-            'weight' => 'required|numeric',
+            'product_id' => 'sometimes|required|integer|exists:products,id',
+            'weight' => 'sometimes|required|numeric',
             'cod' => 'sometimes|required|boolean'
         ]);
+        $product = Product::find($request->product_id);
+        $weight =
+            $product
+            ?->attribute_values()
+            ?->whereHas('attribute', function ($attributes) {
+                $attributes->where('code', 'weight');
+            })
+            ->first()?->text_value ?? 0.5;
 
         $pickUpAddress = app('Webkul\Inventory\Repositories\InventorySourceRepository')->getModel()->latest()->first();
 
         $request->mergeIfMissing([
             'pickup_postcode' => config('shiprocket.pickupPostcode') ?? $pickUpAddress->postcode,
+            'weight' => $weight,
             'cod' => 0
         ]);
 
-        $data = $this->shiprocketApi->getEstimatedDelivery($request);
+        //$data = $this->shiprocketApi->getEstimatedDelivery($request);
+        $shiprocketApi = new Shiprocket;
+        $data = $shiprocketApi->getEstimatedDelivery($request);
         return response()->json($data);
     }
 

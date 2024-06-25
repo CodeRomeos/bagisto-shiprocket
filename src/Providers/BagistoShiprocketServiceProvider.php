@@ -29,6 +29,8 @@ class BagistoShiprocketServiceProvider extends ServiceProvider
             $viewRenderEventManager->addTemplate('bagistoshiprocket::admin.layouts.style');
         });
 
+        Blade::component('bagistoshiprocket::shop.components.pincode-availability', 'bagistoshiprocket::pincode-availability');
+
         $this->registerBladeDirectives();
     }
 
