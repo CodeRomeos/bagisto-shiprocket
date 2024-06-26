@@ -162,7 +162,6 @@ class BagistoShiprocketController extends Controller
             'cod' => 0
         ]);
 
-        //$data = $this->shiprocketApi->getEstimatedDelivery($request);
         $shiprocketApi = new Shiprocket;
         $data = $shiprocketApi->getEstimatedDelivery($request);
         return response()->json($data);
@@ -194,7 +193,8 @@ class BagistoShiprocketController extends Controller
             'cod' => 0
         ]);
 
-        $data = $this->shiprocketApi->getEstimatedDelivery($request);
+        $shiprocketApi = new Shiprocket;
+        $data = $shiprocketApi->getEstimatedDelivery($request);
         return response()->json($data);
     }
 }
