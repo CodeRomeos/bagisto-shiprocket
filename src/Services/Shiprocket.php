@@ -97,4 +97,24 @@ class Shiprocket
         $json = $response->json();
         return $json;
     }
+
+    public function createCustomOrder($request)
+    {
+        $token = Cache::get('bagistoshiprocket_token');
+
+        if (!$token) {
+            return false;
+        }
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $token
+        ])->post($this->baseUrl . '/orders/create/adhoc', $request->all());
+
+        if ($response->failed()) {
+            return false;
+        }
+
+        $json = $response->json();
+        return $json;
+    }
 }
